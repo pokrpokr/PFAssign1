@@ -20,44 +20,58 @@ class RobotControl
 	   int max_blockH = maxBlockH(blockHeights);
 	   int sum_blockH = blockHSum(blockHeights);
 	   int up_h = sum_blockH >= (max_blockH + max_barH)? sum_blockH:max_barH + max_blockH;
-	   int[] temp = {};
 	   int diffHeight = max_blockH + max_barH - sum_blockH;
 	   int tempHeight = up_h == sum_blockH? 0:diffHeight;
 	   
-	   if (ordered) {
-		
-	   } else {
-		
-	   }
-	   
+	   // program start
 	   Mv_up(r, up_h - 1);
-	   for(int i = blockHeights.length - 1; i >= 0; i--) {
-		   Mv_extend(r, 9);
-		   Mv_lower(r, tempHeight);
-		   r.pick();
-		   Mv_raise(r, tempHeight);
-		   tempHeight+= blockHeights[i];
-		   Mv_contract(r,9);
-		   if (up_h == sum_blockH) {
-			   Mv_lower(r, up_h - tempHeight);
-			   r.drop();
-			   Mv_raise(r, up_h - tempHeight);
-		   } else {
-			   Mv_lower(r, up_h - tempHeight + diffHeight);
-			   r.drop();
-			   Mv_raise(r, up_h - tempHeight + diffHeight);
+	   // using 'ordered' to estimate whether need to drop in specific order
+	   if (ordered && required.length != 0) {
+		   ArrayList<Integer> temp = new ArrayList<Integer>();
+		   ArrayList<Integer> copyBlockHeights = new ArrayList<Integer>();
+		   copyBlockHeights = copyArray(copyBlockHeights, blockHeights);
+		   for (int i = 0; i < required.length; i++) {
+			   int block_index = copyBlockHeights.indexOf(required[i]);
+			   for (int j = copyBlockHeights.size() - 1; j > block_index; j--) {
+				   temp.add(copyBlockHeights.remove(j));
+			   }
 		   }
-		   
-	   }
+	   } else {
+		   for(int i = blockHeights.length - 1; i >= 0; i--) {
+			   Mv_extend(r, 9);
+			   Mv_lower(r, tempHeight);
+			   r.pick();
+			   Mv_raise(r, tempHeight);
+			   tempHeight+= blockHeights[i];
+			   Mv_contract(r,9);
+			   if (up_h == sum_blockH) {
+				   Mv_lower(r, up_h - tempHeight);
+				   r.drop();
+				   Mv_raise(r, up_h - tempHeight);
+			   } else {
+				   Mv_lower(r, up_h - tempHeight + diffHeight);
+				   r.drop();
+				   Mv_raise(r, up_h - tempHeight + diffHeight);
+			   }
+			   
+		   }
+	   }  
    }
    
-   private int find_index(int[] blockHeights, int value) {
-	   int index = 0;
-	   for(int i = 0; i < blockHeights.length; i++)
-		   if(blockHeights[i] == value)
-			   index = i;
-	   return index;	   
+   private ArrayList<Integer> copyArray(ArrayList<Integer>copy_array, int array[]) {
+	   for (int i = 0; i < array.length; i++) {
+		   copy_array.add(array[i]);
+	   }
+	   return copy_array;
    }
+   
+//   private int find_index(int[] blockHeights, int value) {
+//	   int index = 0;
+//	   for(int i = 0; i < blockHeights.length; i++)
+//		   if(blockHeights[i] == value)
+//			   index = i;
+//	   return index;	   
+//   }
    
    private int maxBlockH(int[] blockHeights) {
 	   int max_blockH = blockHeights[0];
