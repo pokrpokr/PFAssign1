@@ -10,26 +10,6 @@ class RobotControl
        this.r = r;
    }
    
-//   public static void main(String[] args) {
-//	   System.out.println("*********");
-//	   int[] barHeights = new int[6];
-//	   int[] blockHeights = new int[4];
-//	   int[] required = new int[4];
-//	   boolean ordered = false;
-//	   Scanner scan = new Scanner(System.in);
-//	   
-//	   for(int i = 0; i < 6; i++) {
-//		   System.out.println("Please input " + (i+1) + " bar height");
-//		   barHeights[i] = scan.nextInt();
-//	   }
-//	   
-//	   for(int i = 0; i < 4; i++) {
-//		   System.out.println("Please input " + (i+1) + " block height");
-//		   blockHeights[i] = scan.nextInt();
-//	   }
-//	   control(barHeights, blockHeights, required, ordered);
-//   }
-   
    public void control(int barHeights[], int blockHeights[], int required[], boolean ordered)
    {   int h; // 2 < h < 14
        int w; // 1 < w < 10
@@ -40,14 +20,31 @@ class RobotControl
 	   int max_blockH = maxBlockH(blockHeights);
 	   int sum_blockH = blockHSum(blockHeights);
 	   int up_h = sum_blockH >= (max_blockH + max_barH)? sum_blockH:max_barH + max_blockH;
+	   int[] temp = {};
+	   int diffHeight = max_blockH + max_barH - sum_blockH;
+	   int tempHeight = up_h == sum_blockH? 0:diffHeight;
 	   
-	   Mv_up(r, up_h);
-	   Mv_extend(r, 9);
-	   Mv_lower(r, 1);
-	   r.pick();
-	   Mv_contract(r,9);
-//	   Mv_lower(r,up_h - block_h);
-	   
+	   Mv_up(r, up_h - 1);
+	   for(int i = blockHeights.length - 1; i >= 0; i--) {
+		   Mv_extend(r, 9);
+		   Mv_lower(r, tempHeight);
+		   r.pick();
+		   Mv_raise(r, tempHeight);
+		   tempHeight+= blockHeights[i];
+		   Mv_contract(r,9);
+		   System.out.println("###################");
+		   System.out.println(up_h - tempHeight);
+		   if (up_h == sum_blockH) {
+			   Mv_lower(r, up_h - tempHeight);
+			   r.drop();
+			   Mv_raise(r, up_h - tempHeight);
+		   } else {
+			   Mv_lower(r, up_h - tempHeight + diffHeight);
+			   r.drop();
+			   Mv_raise(r, up_h - tempHeight + diffHeight);
+		   }
+		   
+	   }
    }
    
    private int maxBlockH(int[] blockHeights) {
