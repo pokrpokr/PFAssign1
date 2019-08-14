@@ -24,6 +24,12 @@ class RobotControl
 	   int diffHeight = max_blockH + max_barH - sum_blockH;
 	   int tempHeight = up_h == sum_blockH? 0:diffHeight;
 	   
+	   if (ordered) {
+		
+	   } else {
+		
+	   }
+	   
 	   Mv_up(r, up_h - 1);
 	   for(int i = blockHeights.length - 1; i >= 0; i--) {
 		   Mv_extend(r, 9);
@@ -32,8 +38,6 @@ class RobotControl
 		   Mv_raise(r, tempHeight);
 		   tempHeight+= blockHeights[i];
 		   Mv_contract(r,9);
-		   System.out.println("###################");
-		   System.out.println(up_h - tempHeight);
 		   if (up_h == sum_blockH) {
 			   Mv_lower(r, up_h - tempHeight);
 			   r.drop();
@@ -45,6 +49,14 @@ class RobotControl
 		   }
 		   
 	   }
+   }
+   
+   private int find_index(int[] blockHeights, int value) {
+	   int index = 0;
+	   for(int i = 0; i < blockHeights.length; i++)
+		   if(blockHeights[i] == value)
+			   index = i;
+	   return index;	   
    }
    
    private int maxBlockH(int[] blockHeights) {
@@ -60,14 +72,6 @@ class RobotControl
 	   for(int i = 0; i < blockHeights.length; i++)
 		   sum += blockHeights[i];
 	   return sum;
-   }
-   
-   private int find_index(int[] blockHeights, int value) {
-	   int index = 0;
-	   for(int i = 0; i < blockHeights.length; i++)
-		   if(blockHeights[i] == value)
-			   index = i;
-	   return index;	   
    }
 
    private void Mv_up(Robot r, int sourceHt) {
