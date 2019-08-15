@@ -26,7 +26,7 @@ class RobotControl
 	   // program start
 	   mvUp(r, upH - 1);
 	   // using 'ordered' to estimate whether need to drop in specific order
-	   if (required.length != 4) {
+	   if (required.length == 4) {
 		   ArrayList<Integer> temp = new ArrayList<Integer>();
 		   ArrayList<Integer> copyBlockHeights = new ArrayList<Integer>();
 		   copyBlockHeights = copyArray(copyBlockHeights, blockHeights);
@@ -54,6 +54,7 @@ class RobotControl
 						   r.drop();
 						   mvRaise(r, upH - tempHeight + diffHeight);
 					   }
+					   System.out.println("*************");
 				   }
 				   mvExtend(r, 8);
 			   } else if (tempBlockIndex != -1) {
