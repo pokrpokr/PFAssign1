@@ -26,7 +26,7 @@ class RobotControl
 	   // program start
 	   mvUp(r, upH - 1);
 	   // using 'ordered' to estimate whether need to drop in specific order
-	   if (required.length == 4) {
+	   if (compareArray(blockHeights, required)) {
 		   ArrayList<Integer> temp = new ArrayList<Integer>();
 		   ArrayList<Integer> copyBlockHeights = new ArrayList<Integer>();
 		   copyBlockHeights = copyArray(copyBlockHeights, blockHeights);
@@ -34,10 +34,13 @@ class RobotControl
 			   int blockIndex = copyBlockHeights.indexOf(required[i]);
 			   int tempBlockIndex = temp.indexOf(required[i]);
 			   if (blockIndex != -1) {
-				   for (int j = copyBlockHeights.size() - 1; j > blockIndex; j--) {
+				   for (int j = copyBlockHeights.size() - 1; j >= blockIndex; j--) {
 					   temp.add(copyBlockHeights.remove(j));
 				   }
 				   mvExtend(r, 8);
+				   for (int j = 0; j < temp.size(); j++) {
+					   System.out.println("!!!!"+ temp.get(j));
+				   }
 				   for (int z = 0; z < temp.size(); z++) {
 					   mvExtend(r, 1);
 					   mvLower(r, tempHeight);
@@ -54,9 +57,8 @@ class RobotControl
 						   r.drop();
 						   mvRaise(r, upH - tempHeight + diffHeight);
 					   }
-					   System.out.println("*************");
 				   }
-				   mvExtend(r, 8);
+				   mvContract(r, 8);
 			   } else if (tempBlockIndex != -1) {
 				   
 			   } else {
@@ -80,9 +82,18 @@ class RobotControl
 				   r.drop();
 				   mvRaise(r, upH - tempHeight + diffHeight);
 			   }
-			   
 		   }
 	   }  
+   }
+   private boolean compareArray(int arr1[], int arr2[]) {
+	   if (Arrays.equals(arr1, arr2)) {
+		   return false; 
+	   }
+	   int [] temp = new int [arr2.length];
+	   for (int i = 0; i < arr2.length; i++) {
+		   temp[i] = arr2[arr2.length - i -1];
+	   }
+	   return !Arrays.equals(arr1, temp);
    }
    
    private ArrayList<Integer> copyArray(ArrayList<Integer>copyArray, int array[]) {
