@@ -22,7 +22,7 @@ class RobotControl
 	   int upH = sumBlockH >= (maxBlockH + maxBarH)? sumBlockH:maxBarH + maxBlockH;
 	   int diffHeight = maxBlockH + maxBarH - sumBlockH;
 	   int tempHeight = upH == sumBlockH? 0:diffHeight;
-	   
+	   System.out.println("inital heights" + upH + "," + diffHeight + "," + tempHeight);
 	   // program start
 	   mvUp(r, upH - 1);
 	   // using 'ordered' to estimate whether need to drop in specific order
@@ -30,37 +30,65 @@ class RobotControl
 		   ArrayList<Integer> temp = new ArrayList<Integer>();
 		   ArrayList<Integer> copyBlockHeights = new ArrayList<Integer>();
 		   copyBlockHeights = copyArray(copyBlockHeights, blockHeights);
+		   int lastBlockHeight = 0;
+		   int tempBlocksHeightSum = 0;
 		   for (int i = 0; i < required.length; i++) {
 			   int blockIndex = copyBlockHeights.indexOf(required[i]);
 			   int tempBlockIndex = temp.indexOf(required[i]);
 			   if (blockIndex != -1) {
-				   for (int j = copyBlockHeights.size() - 1; j >= blockIndex; j--) {
-					   temp.add(copyBlockHeights.remove(j));
-				   }
 				   mvExtend(r, 8);
-				   for (int j = 0; j < temp.size(); j++) {
-					   System.out.println("!!!!"+ temp.get(j));
-				   }
-				   for (int z = 0; z < temp.size(); z++) {
+				   for (int j = copyBlockHeights.size() - 1; j > blockIndex; j--) {
+					   int rmHeight = copyBlockHeights.remove(j);
+					   temp.add(rmHeight);
 					   mvExtend(r, 1);
 					   mvLower(r, tempHeight);
 					   r.pick();
 					   mvRaise(r, tempHeight);
-					   tempHeight+= temp.get(z);
+					   tempHeight+= rmHeight;
+					   sumBlockH -= rmHeight;
+					   tempBlocksHeightSum += rmHeight;
 					   mvContract(r, 1);
-					   if (upH == sumBlockH) {
-						   mvLower(r, upH - tempHeight);
-						   r.drop();
-						   mvRaise(r, upH - tempHeight);
-					   } else {
-						   mvLower(r, upH - tempHeight + diffHeight);
-						   r.drop();
-						   mvRaise(r, upH - tempHeight + diffHeight);
-					   }
+					   mvLower(r, upH - tempBlocksHeightSum);
+					   r.drop();
+					   mvRaise(r, upH - tempBlocksHeightSum);
 				   }
-				   mvContract(r, 8);
+				   mvExtend(r, 1);
+				   System.out.println("running here!" + "----" + blockIndex + "," + tempBlockIndex);
+				   mvLower(r, tempHeight);
+				   r.pick();
+				   mvRaise(r, tempHeight);
+				   tempHeight += copyBlockHeights.get(copyBlockHeights.size()-1);
+				   mvContract(r, 9);
+				   lastBlockHeight += copyBlockHeights.remove(copyBlockHeights.size()-1);
+				   mvLower(r, upH - lastBlockHeight);
+				   r.drop();
+				   mvRaise(r, upH - lastBlockHeight);
 			   } else if (tempBlockIndex != -1) {
-				   
+				   mvExtend(r, 9);
+				   for (int j = temp.size() - 1; j > tempBlockIndex ; j--) {
+					   int rmHeight = temp.remove(j);
+					   copyBlockHeights.add(rmHeight);
+					   tempBlocksHeightSum -= rmHeight;
+					   sumBlockH += rmHeight;
+					   mvContract(r, 1);
+					   mvLower(r, upH - tempBlocksHeightSum - 1);
+					   r.pick();
+					   mvRaise(r, upH - tempBlocksHeightSum - 1 );
+					   mvExtend(r, 1);
+					   mvLower(r, upH - rmHeight);
+					   r.drop();
+					   mvRaise(r, upH - rmHeight);
+				   }
+				   mvContract(r, 1);
+				   System.out.println("running here!" + "----" + blockIndex + "," + tempBlockIndex);
+				   mvLower(r, upH - tempBlocksHeightSum);
+				   r.pick();
+				   mvRaise(r, upH - tempBlocksHeightSum);
+				   mvContract(r, 8);
+				   lastBlockHeight += temp.remove(temp.size() - 1);
+				   mvLower(r, upH - lastBlockHeight);
+				   r.drop();
+				   mvRaise(r, upH - lastBlockHeight);
 			   } else {
 				   System.out.println("Error no required element in block array!");
 			   }
@@ -71,7 +99,7 @@ class RobotControl
 			   mvLower(r, tempHeight);
 			   r.pick();
 			   mvRaise(r, tempHeight);
-			   tempHeight+= blockHeights[i];
+			   tempHeight += blockHeights[i];
 			   mvContract(r,9);
 			   if (upH == sumBlockH) {
 				   mvLower(r, upH - tempHeight);
