@@ -25,6 +25,7 @@ class RobotControl
 	   // program start
 	   mvUp(r, upH - 1);
 	   if (compareArray(blockHeights, required)) {
+		   // part D
 		   ArrayList<Integer> temp = new ArrayList<Integer>();
 		   ArrayList<Integer> copyBlockHeights = new ArrayList<Integer>();
 		   copyBlockHeights = copyArray(copyBlockHeights, blockHeights);
@@ -72,16 +73,18 @@ class RobotControl
 					   mvRaise(r, upH - tempBlocksHeightSum);
 					   tempBlocksHeightSum -= rmHeight;
 					   mvExtend(r, 1);
-					   mvLower(r, upH - rmHeight);
+					   mvLower(r, tempHeight);
 					   r.drop();
-					   mvRaise(r, upH - rmHeight);
+					   mvRaise(r, tempHeight);
 					   mvContract(r, 1);
 				   }
 				   mvLower(r, upH - tempBlocksHeightSum);
 				   r.pick();
 				   mvRaise(r, upH - tempBlocksHeightSum);
 				   mvContract(r, 8);
-				   lastBlockHeight += temp.remove(temp.size() - 1);
+				   int lastTempH = temp.remove(temp.size() - 1);
+				   lastBlockHeight += lastTempH;
+				   tempBlocksHeightSum -= lastTempH;
 				   mvLower(r, upH - lastBlockHeight);
 				   r.drop();
 				   mvRaise(r, upH - lastBlockHeight);
@@ -90,6 +93,7 @@ class RobotControl
 			   }
 		   }
 	   } else {
+		   // part A, B, C
 		   for(int i = blockHeights.length - 1; i >= 0; i--) {
 			   mvExtend(r, 9);
 			   mvLower(r, tempHeight);
@@ -110,9 +114,9 @@ class RobotControl
 	   }  
    }
    private boolean compareArray(int arr1[], int arr2[]) {
-	   if (Arrays.equals(arr1, arr2)) {
-		   return false; 
-	   }
+//	   if (Arrays.equals(arr1, arr2)) {
+//		   return false; 
+//	   }
 	   int [] temp = new int [arr2.length];
 	   for (int i = 0; i < arr2.length; i++) {
 		   temp[i] = arr2[arr2.length - i -1];
