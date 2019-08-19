@@ -11,10 +11,10 @@ class RobotControl
    }
    
    public void control(int barHeights[], int blockHeights[], int required[], boolean ordered)
-   {   int h; // 2 < h < 14
-       int w; // 1 < w < 10
-       int d; // 0 < d < h
-       int block_h;
+   {   //int h; // 2 < h < 14
+       //int w; // 1 < w < 10
+       //int d; // 0 < d < h
+       //int block_h;
 	   int maxBarH = Math.max(MyMath.max(barHeights[0], barHeights[1], barHeights[2]),
 			   MyMath.max(barHeights[3], barHeights[4], barHeights[5]));
 	   int maxBlockH = maxBlockH(blockHeights);
@@ -22,10 +22,8 @@ class RobotControl
 	   int upH = sumBlockH >= (maxBlockH + maxBarH)? sumBlockH:maxBarH + maxBlockH;
 	   int diffHeight = maxBlockH + maxBarH - sumBlockH;
 	   int tempHeight = upH == sumBlockH? 0:diffHeight;
-	   System.out.println("inital heights" + upH + "," + diffHeight + "," + tempHeight);
 	   // program start
 	   mvUp(r, upH - 1);
-	   // using 'ordered' to estimate whether need to drop in specific order
 	   if (compareArray(blockHeights, required)) {
 		   ArrayList<Integer> temp = new ArrayList<Integer>();
 		   ArrayList<Integer> copyBlockHeights = new ArrayList<Integer>();
@@ -65,7 +63,6 @@ class RobotControl
 			   } else if (tempBlockIndex != -1) {
 				   mvExtend(r, 9);
 				   for (int j = temp.size() - 1; j > tempBlockIndex ; j--) {
-					   System.out.println("array is " +j+":"+ temp.get(j));
 					   int rmHeight = temp.remove(j);
 					   copyBlockHeights.add(rmHeight);
 					   sumBlockH += rmHeight;
