@@ -31,8 +31,8 @@ class RobotControl
 		   int lastBlockHeight = 0;
 		   int tempBlocksHeightSum = 0;
 		   for (int i = 0; i < required.length; i++) {
-			   int blockIndex = copyBlockHeights.indexOf(required[i]);
-			   int tempBlockIndex = temp.indexOf(required[i]);
+			   int blockIndex = findIndex(copyBlockHeights,required[i]);
+			   int tempBlockIndex = findIndex(temp,required[i]);
 			   if (blockIndex != -1) {
 				   mvExtend(r, 8);
 				   for (int j = copyBlockHeights.size() - 1; j > blockIndex; j--) {
@@ -61,13 +61,12 @@ class RobotControl
 				   r.drop();
 				   mvRaise(r, upH - lastBlockHeight);
 			   } else if (tempBlockIndex != -1) {
-				   mvExtend(r, 9);
+				   mvExtend(r, 8);
 				   for (int j = temp.size() - 1; j > tempBlockIndex ; j--) {
 					   int rmHeight = temp.remove(j);
 					   copyBlockHeights.add(rmHeight);
 					   sumBlockH += rmHeight;
 					   tempHeight-= rmHeight;
-					   mvContract(r, 1);
 					   mvLower(r, upH - tempBlocksHeightSum);
 					   r.pick();
 					   mvRaise(r, upH - tempBlocksHeightSum);
@@ -76,8 +75,8 @@ class RobotControl
 					   mvLower(r, upH - rmHeight);
 					   r.drop();
 					   mvRaise(r, upH - rmHeight);
+					   mvContract(r, 1);
 				   }
-				   mvContract(r, 1);
 				   mvLower(r, upH - tempBlocksHeightSum);
 				   r.pick();
 				   mvRaise(r, upH - tempBlocksHeightSum);
@@ -128,13 +127,14 @@ class RobotControl
 	   return copyArray;
    }
    
-//   private int find_index(int[] blockHeights, int value) {
-//	   int index = 0;
-//	   for(int i = 0; i < blockHeights.length; i++)
-//		   if(blockHeights[i] == value)
-//			   index = i;
-//	   return index;	   
-//   }
+   private int findIndex(ArrayList<Integer> arr, int value) {
+	   int index = -1;
+	   for(int i = 0; i < arr.size(); i++) {
+		   if(arr.get(i) == value)
+			   index = i;
+	   }
+	   return index;	   
+   }
    
    private int maxBlockH(int[] blockHeights) {
 	   int maxBlockH = blockHeights[0];
