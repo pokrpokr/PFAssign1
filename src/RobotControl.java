@@ -53,7 +53,6 @@ class RobotControl
 					   mvRaise(r, upH - tempBlocksHeightSum);
 				   }
 				   mvExtend(r, 1);
-				   System.out.println("running here!" + "----" + blockIndex + "," + tempBlockIndex);
 				   mvLower(r, tempHeight);
 				   r.pick();
 				   mvRaise(r, tempHeight);
@@ -66,21 +65,22 @@ class RobotControl
 			   } else if (tempBlockIndex != -1) {
 				   mvExtend(r, 9);
 				   for (int j = temp.size() - 1; j > tempBlockIndex ; j--) {
+					   System.out.println("array is " +j+":"+ temp.get(j));
 					   int rmHeight = temp.remove(j);
 					   copyBlockHeights.add(rmHeight);
-					   tempBlocksHeightSum -= rmHeight;
 					   sumBlockH += rmHeight;
+					   tempHeight-= rmHeight;
 					   mvContract(r, 1);
-					   mvLower(r, upH - tempBlocksHeightSum - 1);
+					   mvLower(r, upH - tempBlocksHeightSum);
 					   r.pick();
-					   mvRaise(r, upH - tempBlocksHeightSum - 1 );
+					   mvRaise(r, upH - tempBlocksHeightSum);
+					   tempBlocksHeightSum -= rmHeight;
 					   mvExtend(r, 1);
 					   mvLower(r, upH - rmHeight);
 					   r.drop();
 					   mvRaise(r, upH - rmHeight);
 				   }
 				   mvContract(r, 1);
-				   System.out.println("running here!" + "----" + blockIndex + "," + tempBlockIndex);
 				   mvLower(r, upH - tempBlocksHeightSum);
 				   r.pick();
 				   mvRaise(r, upH - tempBlocksHeightSum);
