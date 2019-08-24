@@ -38,8 +38,6 @@ class RobotControl
 		   int tempBlocksHeightSum = 0;
 		   for (int i = 0; i < required.length; i++) {
 			   // find required block from temporary and departure area
-//			   int blockIndex = findIndex(copyBlockHeights,required[i]);
-//			   int tempBlockIndex = findIndex(temp,required[i]);
 			   int blockIndex = copyBlockHeights.lastIndexOf(required[i]);
 			   int tempBlockIndex = temp.lastIndexOf(required[i]);
 			   // block is found from departure area
