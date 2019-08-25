@@ -37,12 +37,14 @@ class RobotControl
 		   //summing the height of dropped blocks at temporary area
 		   int tempBlocksHeightSum = 0;
 		   for (int i = 0; i < required.length; i++) {
-			   // find required block from temporary and departure area
+			   // find required block's index from temp and source area
 			   int blockIndex = copyBlockHeights.lastIndexOf(required[i]);
 			   int tempBlockIndex = temp.lastIndexOf(required[i]);
-			   // block is found from departure area
+			   // block is found from source area
 			   if (blockIndex != -1) {
 				   mvExtend(r, 8);
+				   // moving block from the top of source area
+				   // moving the blocks which above the required block to the temp area and calculating the operation height
 				   for (int j = copyBlockHeights.size() - 1; j > blockIndex; j--) {
 					   int rmHeight = copyBlockHeights.remove(j);
 					   temp.add(rmHeight);
@@ -69,6 +71,8 @@ class RobotControl
 				   r.drop();
 				   mvRaise(r, upH - lastBlockHeight);
 			   } else if (tempBlockIndex != -1) {
+				   // block is found from temp area
+				   // moving the blocks which above the required block to the source area and calculating the operation height
 				   mvExtend(r, 8);
 				   for (int j = temp.size() - 1; j > tempBlockIndex ; j--) {
 					   int rmHeight = temp.remove(j);
@@ -96,6 +100,7 @@ class RobotControl
 				   r.drop();
 				   mvRaise(r, upH - lastBlockHeight);
 			   } else {
+				   // in case of other unexpected situation
 				   System.out.println("Error no required element in block array!");
 			   }
 		   }
@@ -120,6 +125,7 @@ class RobotControl
 		   }
 	   }  
    }
+   // compare whether have required order
    private boolean compareArray(int arr1[], int arr2[]) {
 	   int [] temp = new int [arr2.length];
 	   for (int i = 0; i < arr2.length; i++) {
@@ -128,13 +134,14 @@ class RobotControl
 	   return !Arrays.equals(arr1, temp);
    }
    
+   // create new array copy from an array
    private ArrayList<Integer> copyArray(ArrayList<Integer>copyArray, int array[]) {
 	   for (int i = 0; i < array.length; i++) {
 		   copyArray.add(array[i]);
 	   }
 	   return copyArray;
    }
-   
+//	 using lastIndexOf instead of this method
 //   private int findIndex(ArrayList<Integer> arr, int value) {
 //	   int index = -1;
 //	   for(int i = 0; i < arr.size(); i++) {
@@ -144,6 +151,7 @@ class RobotControl
 //	   return index;	   
 //   }
    
+   // find max block height
    private int maxBlockH(int[] blockHeights) {
 	   int maxBlockH = blockHeights[0];
 	   for(int i = 1; i < blockHeights.length; i++) {
@@ -152,6 +160,7 @@ class RobotControl
 	   return maxBlockH;
    }
    
+   // calculating the sum of blocks height
    private int blockHSum(int[] blockHeights) {
 	   int sum = 0;
 	   for(int i = 0; i < blockHeights.length; i++)
